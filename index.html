@@ -1,218 +1,382 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Birthday Surprise</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(to bottom, #4da6ff, #003366);
-      font-family: "Comic Sans MS", cursive, sans-serif;
-      overflow: hidden;
-    }
-    .background-animation {
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise</title>
+
+<style>
+
+/* ===== PAGE BACKGROUND ===== */
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at center, #2b7cff 0%, #001f4d 70%);
+}
+
+/* ===== DISCO BALLS WITH COLOR LIGHTS ===== */
+.disco-ball {
     position: fixed;
-    bottom: 40px;
-    left: -150px;
-    font-size: 80px;
-    animation: runAcross 10s linear infinite;
-    opacity: 0.25;
+    top: 0;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff, #cccccc 40%, #888);
+    box-shadow: 0 0 25px rgba(255,255,255,0.7);
+    animation: swing 3s ease-in-out infinite alternate;
+    z-index: 5;
+}
+
+.disco-left { left: 40px; }
+.disco-right { right: 40px; }
+
+.disco-ball::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    width: 4px;
+    height: 60px;
+    background: white;
+    transform: translateX(-50%);
+}
+
+/* COLOR LIGHT BEAMS */
+.disco-ball::after {
+    content: "";
+    position: absolute;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 300px;
+    background: linear-gradient(to bottom, rgba(255,0,150,0.4), transparent);
+    filter: blur(25px);
+    animation: discoColors 4s linear infinite;
+}
+
+@keyframes swing {
+    from { transform: rotate(-8deg); }
+    to { transform: rotate(8deg); }
+}
+
+@keyframes discoColors {
+    0% { background: linear-gradient(to bottom, rgba(255,0,150,0.4), transparent); }
+    25% { background: linear-gradient(to bottom, rgba(0,255,255,0.4), transparent); }
+    50% { background: linear-gradient(to bottom, rgba(255,255,0,0.4), transparent); }
+    75% { background: linear-gradient(to bottom, rgba(0,255,120,0.4), transparent); }
+    100% { background: linear-gradient(to bottom, rgba(255,0,150,0.4), transparent); }
+}
+
+/* ===== STADIUM LIGHTS ===== */
+.stadium-lights {
+    position: fixed;
+    inset: 0;
     pointer-events: none;
-    }
-    @keyframes runAcross {
-    0% { left: -150px; transform: scaleX(1); }
-    45% { transform: scaleX(1); }
-    50% { transform: scaleX(-1); }
-    95% { transform: scaleX(-1); }
-    100% { left: 110%; }
-    }
-    
+    background: repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.06) 0px,
+        rgba(255,255,255,0.06) 2px,
+        transparent 2px,
+        transparent 120px
+    );
+    animation: lightsMove 8s linear infinite;
+}
 
-    .container {
-      text-align: center;
-      perspective: 1000px;
-    }
+@keyframes lightsMove {
+    from { transform: translateX(0); }
+    to { transform: translateX(120px); }
+}
 
-    .message {
-      margin-bottom: 20px;
-      font-size: 1.3rem;
-      color: #333;
-      animation: pulse 1.5s infinite;
-      transition: opacity 0.4s ease;
-    }
+.stadium-glow {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(255,255,255,0.25), transparent 60%);
+    animation: glowSweep 5s ease-in-out infinite alternate;
+    pointer-events: none;
+}
 
-    /* Hide prompt when opened */
-    .open + .message,
-    .open .message {
-      opacity: 0;
-      pointer-events: none;
-    }
+@keyframes glowSweep {
+    from { opacity: 0.3; }
+    to { opacity: 0.7; }
+}
 
-    @keyframes pulse {
-      0% { opacity: 0.5; }
-      50% { opacity: 1; }
-      100% { opacity: 0.5; }
-    }
+/* ===== BALL HIT EFFECT ===== */
+.screen-ball {
+    position: fixed;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 70px;
+    pointer-events: none;
+    z-index: 10;
+}
 
-    /* Envelope */
-    .envelope {
-      width: 700px;
-      height: 450px;
-      background: #ff8fab;
-      position: relative;
-      border-radius: 14px;
-      box-shadow: 0 16px 35px rgba(0,0,0,0.25);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+.hit {
+    animation: hitScreen 1s ease forwards;
+}
 
-    .flap {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 0;
-      border-left: 350px solid transparent;
-      border-right: 350px solid transparent;
-      border-bottom: 260px solid #ff6f91;
-      transform-origin: top;
-      transition: transform 0.8s ease, opacity 0.4s ease 0.4s;
-      z-index: 3;
-    }
+@keyframes hitScreen {
+    0% { transform: translate(-50%, -50%) scale(0.2); }
+    40% { transform: translate(-50%, -50%) scale(2.2); }
+    60% { transform: translate(-50%, -50%) scale(1.7); }
+    80% { transform: translate(-50%, -50%) scale(2); }
+    100% { transform: translate(-50%, -50%) scale(0); }
+}
 
-    /* Football button */
-    .football {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 90px;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      z-index: 4;
-    }
+/* ===== CONFETTI ===== */
+.confetti {
+    position: fixed;
+    width: 8px;
+    height: 14px;
+    top: -20px;
+    opacity: 0.9;
+    animation: fall linear forwards;
+}
 
-    .football:hover {
-      transform: translate(-50%, -50%) scale(1.15);
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 1;
     }
+}
 
-    /* Hide football when card opens */
-    .open .football {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s ease;
-    }
+/* ===== CENTER CONTAINER ===== */
+.container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    /* Card */
-    .card {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.6);
-      width: 420px;
-      height: 240px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      transition: transform 0.9s ease, opacity 0.6s ease;
-      z-index: 1;
-      padding: 20px;
-      text-align: center;
-    }
+/* ===== ENVELOPE ===== */
+.envelope {
+    position: relative;
+    width: 460px;
+    height: 280px;
+    background: #f5deb3;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
 
-    .card h1 {
-      margin: 6px 0;
-      color: #ff4d6d;
-      font-size: 1.5rem;
-    }
+.flap {
+    position: absolute;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-left: 230px solid transparent;
+    border-right: 230px solid transparent;
+    border-top: 170px solid #e0c097;
+    transform-origin: top;
+    transition: transform 1s ease, opacity 0.6s ease;
+    z-index: 3;
+}
 
-    .card p {
-      margin: 5px 0;
-      font-size: 1rem;
-      color: #444;
-    }
+.open .flap {
+    transform: rotateX(180deg);
+    opacity: 0;
+}
 
-    .open .flap {
-      transform: rotateX(180deg);
-      opacity: 0;
-      transition: transform 0.8s ease, opacity 0.4s ease 0.4s;
-    }
+.football {
+    position: absolute;
+    font-size: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    transition: opacity 0.5s ease;
+}
 
-    .open .card {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-    }
+.open .football { opacity: 0; }
 
-    /* Confetti */
-    .confetti {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      animation: fall 3s linear infinite;
-    }
+.tap-text {
+    position: absolute;
+    bottom: -40px;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    letter-spacing: 1px;
+    animation: pulse 1.5s infinite;
+}
 
-    @keyframes fall {
-      from { transform: translateY(-100vh) rotate(0deg); }
-      to { transform: translateY(100vh) rotate(360deg); }
+@keyframes pulse {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+.open .tap-text { opacity: 0; }
+
+/* ===== CARD ===== */
+.card {
+    position: absolute;
+    width: 400px;
+    height: 230px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    transform: translate(-50%, 40px);
+    left: 50%;
+    top: 50%;
+    opacity: 0;
+    transition: transform 1s ease, opacity 1s ease;
+    z-index: 2;
+}
+
+.card h1 { margin: 5px 0; font-size: 22px; }
+.card h2 { margin: 5px 0; color: #2b7cff; }
+.card h3 { margin: 5px 0; font-weight: normal; }
+
+.open .card {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+
+/* ===== FIREWORKS ===== */
+.firework {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+@keyframes explode {
+    from {
+        transform: translate(0,0) scale(1);
+        opacity: 1;
     }
-  </style>
+    to {
+        transform: translate(var(--x), var(--y)) scale(0.3);
+        opacity: 0;
+    }
+}
+
+</style>
 </head>
+
 <body>
-<div class="background-animation">🏃‍♂️⚽</div>
-  <div class="container">
-    <div class="message">Tap the football ⚽</div>
 
-    <div class="envelope" id="envelope">
-      <div class="flap"></div>
-      <div class="football" id="football">⚽</div>
+<!-- Disco Balls -->
+<div class="disco-ball disco-left"></div>
+<div class="disco-ball disco-right"></div>
 
-      <div class="card">
-        <h1> YOU ARE INVITED TO </h1>
-        <h2>🎉Shivam's 12th Birthday Party!🎉</h2>
-        <h3> On 1st March</h3>
-        <p>Join us for fun, laughter, and Party ! ⚽🎂</p>
-        <p> At 32 DDA SFS FLATS SEC22</p>
-      </div>
+<div class="stadium-lights"></div>
+<div class="stadium-glow"></div>
+
+<!-- Ball hitting screen -->
+<div class="screen-ball" id="screenBall">⚽</div>
+
+<!-- Crowd cheer audio -->
+<audio id="cheerSound" preload="auto">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b8b2c.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container">
+    <div class="envelope" onclick="openEnvelope(this)">
+        <div class="flap"></div>
+        <div class="football">⚽</div>
+        <div class="card">
+            <h1>YOU ARE INVITED TO</h1>
+            <h2>🎉 Shivam's 12th Birthday Party! 🎉</h2>
+            <h3>📅 1st March</h3>
+            <p>Join us for fun, laughter, and party! ⚽🎂</p>
+            <p>📍 32 DDA SFS Flats, Sec 22</p>
+        </div>
+        <div class="tap-text">Tap the envelope</div>
     </div>
-  </div>
+</div>
 
-  <script>
-    const envelope = document.getElementById("envelope");
-    const football = document.getElementById("football");
+<script>
 
-    football.addEventListener("click", () => {
-      envelope.classList.toggle("open");
-      createConfetti();
-    });
+// EXTRA CROWD CHEER LAYER
+function playCrowdCheer(){
+    const sound = document.getElementById("cheerSound");
+    sound.volume = 1.0;
+    sound.currentTime = 0;
+    sound.play().catch(()=>{});
+}
 
-    function createConfetti() {
-      for (let i = 0; i < 40; i++) {
-        const confetti = document.createElement("div");
-        confetti.className = "confetti";
-        confetti.style.left = Math.random() * window.innerWidth + "px";
-        confetti.style.background = `hsl(${Math.random()*360},70%,60%)`;
-        confetti.style.animationDuration = 2 + Math.random()*2 + "s";
-        document.body.appendChild(confetti);
-        setTimeout(() => confetti.remove(), 4000);
-      }
+function openEnvelope(el) {
+    el.classList.add("open");
+
+    // Crowd cheering
+    playCrowdCheer();
+    el.classList.add("open");
+
+    // Play cheer sound
+    const sound = document.getElementById("cheerSound");
+    sound.currentTime = 0;
+    sound.play().catch(()=>{});
+
+    // Ball hit animation
+    const ball = document.getElementById("screenBall");
+    ball.classList.remove("hit");
+    void ball.offsetWidth;
+    ball.classList.add("hit");
+
+    // Confetti
+    createConfetti();
+
+    // Fireworks
+    launchFireworks();
+    createConfetti();
+}
+
+function launchFireworks(){
+    for(let i=0;i<6;i++){
+        setTimeout(()=> createFireworkBurst(), i*300);
     }
-  </script>
+}
+
+function createFireworkBurst(){
+    const centerX = Math.random()*window.innerWidth;
+    const centerY = Math.random()*window.innerHeight*0.5;
+    const colors = ["#ff4d4d","#ffd700","#00ffcc","#ffffff","#ff7cff","#4da6ff"];
+
+    for(let i=0;i<30;i++){
+        const part = document.createElement("div");
+        part.className = "firework";
+        part.style.left = centerX + "px";
+        part.style.top = centerY + "px";
+        part.style.background = colors[Math.floor(Math.random()*colors.length)];
+
+        const angle = Math.random()*2*Math.PI;
+        const distance = 80 + Math.random()*120;
+        part.style.setProperty("--x", Math.cos(angle)*distance + "px");
+        part.style.setProperty("--y", Math.sin(angle)*distance + "px");
+        part.style.animation = "explode 1s ease-out forwards";
+
+        document.body.appendChild(part);
+        setTimeout(()=>part.remove(),1000);
+    }
+}
+
+function createConfetti() {
+    const colors = ["#ff4d4d","#ffd700","#00ffcc","#ffffff","#ff7cff"];
+
+    for (let i = 0; i < 80; i++) {
+        const conf = document.createElement("div");
+        conf.className = "confetti";
+        conf.style.left = Math.random() * 100 + "vw";
+        conf.style.background = colors[Math.floor(Math.random()*colors.length)];
+        conf.style.animationDuration = (2 + Math.random()*3) + "s";
+        document.body.appendChild(conf);
+        setTimeout(() => conf.remove(), 5000);
+    }
+}
+</script>
+
 </body>
 </html>
-
-
-
-
-
-
