@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Surprise</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ffd6e7, #d6f0ff);
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      perspective: 1000px;
+    }
+
+    .message {
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      color: #333;
+      animation: pulse 1.5s infinite;
+      transition: opacity 0.4s ease;
+    }
+
+    /* Hide prompt when opened */
+    .open + .message,
+    .open .message {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+
+    /* Envelope */
+    .envelope {
+      width: 700px;
+      height: 450px;
+      background: #ff8fab;
+      position: relative;
+      border-radius: 14px;
+      box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 350px solid transparent;
+      border-right: 350px solid transparent;
+      border-bottom: 260px solid #ff6f91;
+      transform-origin: top;
+      transition: transform 0.8s ease, opacity 0.4s ease 0.4s;
+      z-index: 3;
+    }
+
+    /* Football button */
+    .football {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 90px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      z-index: 4;
+    }
+
+    .football:hover {
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+
+    /* Hide football when card opens */
+    .open .football {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    /* Card */
+    .card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.6);
+      width: 420px;
+      height: 240px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: transform 0.9s ease, opacity 0.6s ease;
+      z-index: 1;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card h1 {
+      margin: 6px 0;
+      color: #ff4d6d;
+      font-size: 1.5rem;
+    }
+
+    .card p {
+      margin: 5px 0;
+      font-size: 1rem;
+      color: #444;
+    }
+
+    .open .flap {
+      transform: rotateX(180deg);
+      opacity: 0;
+      transition: transform 0.8s ease, opacity 0.4s ease 0.4s;
+    }
+
+    .open .card {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    /* Confetti */
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      animation: fall 3s linear infinite;
+    }
+
+    @keyframes fall {
+      from { transform: translateY(-100vh) rotate(0deg); }
+      to { transform: translateY(100vh) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="message">Tap the football ⚽</div>
+
+    <div class="envelope" id="envelope">
+      <div class="flap"></div>
+      <div class="football" id="football">⚽</div>
+
+      <div class="card">
+        <h1> YOU ARE INVITED TO </h1>
+        <h2>🎉 Shivam's 12th Birthday Party! 🎉</h2>
+        <h3> On 1st March</h3>
+        <p>Join us for some fun, laughter, and lots of cake! ⚽🎂</p>
+        <p> At 32 DDA SFS FLATS SEC22</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const envelope = document.getElementById("envelope");
+    const football = document.getElementById("football");
+
+    football.addEventListener("click", () => {
+      envelope.classList.toggle("open");
+      createConfetti();
+    });
+
+    function createConfetti() {
+      for (let i = 0; i < 40; i++) {
+        const confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.style.left = Math.random() * window.innerWidth + "px";
+        confetti.style.background = `hsl(${Math.random()*360},70%,60%)`;
+        confetti.style.animationDuration = 2 + Math.random()*2 + "s";
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 4000);
+      }
+    }
+  </script>
+</body>
+</html>
